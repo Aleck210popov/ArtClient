@@ -7,7 +7,7 @@ import lombok.Data;
 @Builder
 @Data
 @AllArgsConstructor
-public class Product {
+public class PartDto {
     private String designation;
     private String name;
     private int quantity;

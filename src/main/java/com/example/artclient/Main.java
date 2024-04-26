@@ -1,8 +1,6 @@
 package com.example.artclient;
 
-import com.example.artclient.domain.AssemblyUnit;
-import com.example.artclient.domain.Part;
-import com.example.artclient.domain.Product;
+import com.example.artclient.domain.ProductDto;
 import com.google.gson.Gson;
 
 import java.net.URI;
@@ -12,20 +10,18 @@ import java.net.http.HttpResponse;
 
 public class Main {
     private static final String BASE_URL = "http://localhost:8080/api/";
+    private static final String ENDPOINT = "products";
 
     public static void main(String[] args) {
         // Создаем объекты, представляющие JSON для сборочной единицы и детали
-        Product product = new Product("ИБПШ.528624.001", "Электропила", 1, 1);
-        AssemblyUnit assemblyUnit = new AssemblyUnit("ЖБИК.528624.001", "Новая сборочная единица", 2, 2);
-        Part part = new Part("ЖБИК.528624.002", "Новая деталь", 5, 3);
+        ProductDto product = new ProductDto("ИБПШ.528624.001", "Электропила", 1, 1, null);
+
 
         // Отправляем POST запросы для добавления сборочной единицы и детали на сервер
-        sendPostRequest("products", part);
-        sendPostRequest("assemblyUnits", assemblyUnit);
-        sendPostRequest("parts", part);
+        sendPostRequest(product);
     }
 
-    private static void sendPostRequest(String endpoint, Object data) {
+    private static void sendPostRequest(Object data) {
         // Преобразуем объект в строку JSON
         Gson gson = new Gson();
         String jsonData = gson.toJson(data);
@@ -35,7 +31,7 @@ public class Main {
 
         // Создаем запрос к серверу
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(BASE_URL + endpoint))
+                .uri(URI.create(BASE_URL + ENDPOINT))
                 .header("Content-Type", "application/json")
                 .POST(HttpRequest.BodyPublishers.ofString(jsonData))
                 .build();
