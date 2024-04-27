@@ -1,5 +1,6 @@
 package com.example.artclient.contoller;
 
+import com.example.artclient.contoller.dto.ProductDto;
 import com.google.gson.Gson;
 
 import java.net.URI;
@@ -11,10 +12,10 @@ import static com.example.artclient.constant.Constant.BASE_URL;
 import static com.example.artclient.constant.Constant.ENDPOINT;
 
 public class ProductController {
-    public static void sendPostRequest(Object data) {
+    public static void sendPostRequest(ProductDto productDto) {
         // Преобразуем объект в строку JSON
         Gson gson = new Gson();
-        String jsonData = gson.toJson(data);
+        String jsonData = gson.toJson(productDto);
 
         // Создаем HTTP клиент
         HttpClient httpClient = HttpClient.newHttpClient();
