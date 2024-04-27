@@ -1,7 +1,7 @@
 package com.example.artclient;
 
 import com.example.artclient.contoller.ProductController;
-import com.example.artclient.domain.ProductDto;
+import com.example.artclient.contoller.dto.ProductDto;
 
 public class App {
     public static void main(String[] args) {
