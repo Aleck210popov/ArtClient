@@ -8,4 +8,7 @@ public class ProductService {
     public void sendPostRequest (Product product) {
         ProductController.sendPostRequest(ProductMapper.toProductDto(product));
     }
+    public String[][] sendGetRequestForm (String designation, int versionDate) {
+        return ProductController.sendGetRequestForm(designation, versionDate);
+    }
 }

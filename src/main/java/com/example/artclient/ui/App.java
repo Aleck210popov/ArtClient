@@ -1,18 +1,17 @@
 package com.example.artclient.ui;
 
-import com.example.artclient.contoller.ProductController;
-import com.example.artclient.contoller.dto.ProductDto;
-import com.example.artclient.domain.Product;
-import com.example.artclient.service.ProductService;
+
+import com.example.artclient.ui.graphical.FrameMain;
+
 
 public class App {
     public static void main(String[] args) {
+            FrameMain fr = new FrameMain();
+            fr.setVisible(true);
 
-        Product product = new Product(null,"ИБПШ.526824.001", "Электропила", 1, 1, 1980, null);
-        ProductService productService = new ProductService();
-        productService.sendPostRequest(product);
-
-        // Отправляем POST запросы для добавления сборочной единицы и детали на сервер
+//        ProductService productService = new ProductService();
+//        String[][] form = productService.sendGetRequestForm("ИБПШ.622665.005", 2024);
+//        System.out.println(Arrays.deepToString(form).replace("], ", "]\n"));
 
     }
 }
