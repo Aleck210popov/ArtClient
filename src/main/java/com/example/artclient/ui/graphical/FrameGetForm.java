@@ -1,5 +1,7 @@
 package com.example.artclient.ui.graphical;
 
+import com.example.artclient.service.ProductService;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -75,17 +77,20 @@ public class FrameGetForm extends JFrame {
             }
         }
         private void getForm (String designation, String versionDate) {
-
+            //panelTable.tableGetForm.setText();
         }
         private class PanelTable extends JPanel {
-            private final JTextPane textGetForm;
+            private final JTable tableGetForm;
             private final JScrollPane scrollPane;
-            {
-                textGetForm = new JTextPane();
-                scrollPane = new JScrollPane(textGetForm);
-            }
+            private final String[] columnsHeader = {"Изделие", "Ближайшая сборка", "Компонент",
+                    "Кол. на изделие", "Кол. на ближайшую сборку", "Количество"};
             private PanelTable() {
                 this.setBackground(Color.YELLOW);
+                ProductService productService = new ProductService();
+
+                tableGetForm = new JTable(productService.sendGetRequestForm("ИБПШ.622665.005", 2024), columnsHeader);
+                scrollPane = new JScrollPane(tableGetForm);
+                this.add(scrollPane);
             }
         }
     }
