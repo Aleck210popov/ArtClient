@@ -1,5 +1,7 @@
 package com.example.artclient.ui.graphical;
 
+import com.example.artclient.service.ProductService;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -16,12 +18,12 @@ public class FrameMain extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         panelMaster.setLayout(null);
     }
-    public FrameMain(){
+    public FrameMain(ProductService productService){
         super("Главное меню");
         JButton buttonForm = new JButton("Получить печатную форму");
         panelMaster.add(buttonForm);
         buttonForm.setBounds(100 , 80, this.getWidth()-200, this.getHeight()-200);
-        FrameGetForm frameStaff = FrameGetForm.getSingleton();
+        FrameGetForm frameStaff = FrameGetForm.getSingleton(productService);
         frameStaff.setVisible(false);
 
         buttonForm.addActionListener(new ActionListener() {

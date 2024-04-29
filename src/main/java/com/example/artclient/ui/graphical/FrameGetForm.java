@@ -1,8 +1,10 @@
 package com.example.artclient.ui.graphical;
 
 import com.example.artclient.service.ProductService;
+import lombok.NonNull;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -10,21 +12,23 @@ import java.awt.event.ActionListener;
 public class FrameGetForm extends JFrame {
     private final PanelGetFormMain panelGetFormMain;
     private static FrameGetForm singleton;
+    private final ProductService productService;
     {
         panelGetFormMain = new PanelGetFormMain();
     }
-    private FrameGetForm(){
+    private FrameGetForm(ProductService productService){
         super("Комплексные числа");
-        this.setSize(700, 500);
+        this.productService=productService;
+        this.setSize(Toolkit.getDefaultToolkit().getScreenSize());
         this.add(panelGetFormMain);
         panelGetFormMain.setVisible(true);
         panelGetFormMain.setBounds(0, 0, this.getWidth(), this.getHeight());
     }
-    public static FrameGetForm getSingleton()
+    public static FrameGetForm getSingleton(ProductService productService)
     {
         if (singleton == null)
         {
-            singleton = new FrameGetForm();
+            singleton = new FrameGetForm(productService);
         }
         return singleton;
     }
@@ -32,6 +36,9 @@ public class FrameGetForm extends JFrame {
     private class PanelGetFormMain extends JPanel {
         private final PanelInputData panelInputData;
         private final PanelTable panelTable;
+        private final String[] columnsHeader = {"Изделие", "Ближайшая сборка", "Компонент",
+                "Уровень", "Кол. на изделие", "Кол. на ближайшую сборку", "Количество"};
+
         {
             panelInputData = new PanelInputData();
             panelTable = new PanelTable();
@@ -42,7 +49,6 @@ public class FrameGetForm extends JFrame {
             this.setLayout(new BorderLayout());
             this.add(panelInputData, BorderLayout.NORTH);
             this.add(panelTable, BorderLayout.CENTER);
-
         }
         private class PanelInputData extends JPanel {
             private final JLabel labelDesignation;
@@ -74,23 +80,42 @@ public class FrameGetForm extends JFrame {
                         getForm(inputFieldDesignation.getText(), inputFieldVervion.getText());
                     }
                 });
+
+                buttonClear.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        panelTable.tableForm.setModel(new DefaultTableModel());
+                    }
+                });
             }
         }
-        private void getForm (String designation, String versionDate) {
-            //panelTable.tableGetForm.setText();
+        private void getForm(String designation, String versionDateString) {
+            try {
+                if (designation.isEmpty() || versionDateString.isEmpty()) {
+                    throw new StringIndexOutOfBoundsException();
+                }
+                int versionDate = Integer.parseInt(versionDateString);
+                System.out.println("оло");
+                panelTable.tableForm.setModel(new DefaultTableModel(productService.sendGetRequestForm(designation,
+                        versionDate), columnsHeader));
+            } catch (StringIndexOutOfBoundsException ex) {
+                JOptionPane.showMessageDialog(null,
+                        "Заполните все поля", "Ошибка", JOptionPane.ERROR_MESSAGE);
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(null,
+                        "Введите корректные значения", "Ошибка", JOptionPane.ERROR_MESSAGE);
+            }
         }
         private class PanelTable extends JPanel {
-            private final JTable tableGetForm;
             private final JScrollPane scrollPane;
-            private final String[] columnsHeader = {"Изделие", "Ближайшая сборка", "Компонент",
-                    "Кол. на изделие", "Кол. на ближайшую сборку", "Количество"};
-            private PanelTable() {
-                this.setBackground(Color.YELLOW);
-                ProductService productService = new ProductService();
+            private final JTable tableForm;
 
-                tableGetForm = new JTable(productService.sendGetRequestForm("ИБПШ.622665.005", 2024), columnsHeader);
-                scrollPane = new JScrollPane(tableGetForm);
-                this.add(scrollPane);
+            private PanelTable() {
+                this.setLayout(new BorderLayout());
+                tableForm =  new JTable();
+                tableForm.setEnabled(false);
+                scrollPane = new JScrollPane(tableForm);
+                this.add(scrollPane, BorderLayout.CENTER);
             }
         }
     }
