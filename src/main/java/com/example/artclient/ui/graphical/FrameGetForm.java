@@ -1,7 +1,6 @@
 package com.example.artclient.ui.graphical;
 
 import com.example.artclient.service.ProductService;
-import lombok.NonNull;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -11,26 +10,17 @@ import java.awt.event.ActionListener;
 
 public class FrameGetForm extends JFrame {
     private final PanelGetFormMain panelGetFormMain;
-    private static FrameGetForm singleton;
     private final ProductService productService;
     {
         panelGetFormMain = new PanelGetFormMain();
     }
-    private FrameGetForm(ProductService productService){
+    FrameGetForm(ProductService productService){
         super("Комплексные числа");
         this.productService=productService;
         this.setSize(Toolkit.getDefaultToolkit().getScreenSize());
         this.add(panelGetFormMain);
         panelGetFormMain.setVisible(true);
         panelGetFormMain.setBounds(0, 0, this.getWidth(), this.getHeight());
-    }
-    public static FrameGetForm getSingleton(ProductService productService)
-    {
-        if (singleton == null)
-        {
-            singleton = new FrameGetForm(productService);
-        }
-        return singleton;
     }
 
     private class PanelGetFormMain extends JPanel {
@@ -81,12 +71,7 @@ public class FrameGetForm extends JFrame {
                     }
                 });
 
-                buttonClear.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        panelTable.tableForm.setModel(new DefaultTableModel());
-                    }
-                });
+                buttonClear.addActionListener(e -> panelTable.tableForm.setModel(new DefaultTableModel()));
             }
         }
         private void getForm(String designation, String versionDateString) {
@@ -94,9 +79,8 @@ public class FrameGetForm extends JFrame {
                 if (designation.isEmpty() || versionDateString.isEmpty()) {
                     throw new StringIndexOutOfBoundsException();
                 }
-                int versionDate = Integer.parseInt(versionDateString);
-                System.out.println("оло");
-                panelTable.tableForm.setModel(new DefaultTableModel(productService.sendGetRequestForm(designation,
+                int versionDate = Integer.parseInt(versionDateString.trim());
+                panelTable.tableForm.setModel(new DefaultTableModel(productService.sendGetRequestForm(designation.trim(),
                         versionDate), columnsHeader));
             } catch (StringIndexOutOfBoundsException ex) {
                 JOptionPane.showMessageDialog(null,
@@ -107,14 +91,13 @@ public class FrameGetForm extends JFrame {
             }
         }
         private class PanelTable extends JPanel {
-            private final JScrollPane scrollPane;
             private final JTable tableForm;
 
             private PanelTable() {
                 this.setLayout(new BorderLayout());
                 tableForm =  new JTable();
                 tableForm.setEnabled(false);
-                scrollPane = new JScrollPane(tableForm);
+                JScrollPane scrollPane = new JScrollPane(tableForm);
                 this.add(scrollPane, BorderLayout.CENTER);
             }
         }

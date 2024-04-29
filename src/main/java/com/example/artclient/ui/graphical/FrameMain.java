@@ -23,12 +23,12 @@ public class FrameMain extends JFrame {
         JButton buttonForm = new JButton("Получить печатную форму");
         panelMaster.add(buttonForm);
         buttonForm.setBounds(100 , 80, this.getWidth()-200, this.getHeight()-200);
-        FrameGetForm frameStaff = FrameGetForm.getSingleton(productService);
-        frameStaff.setVisible(false);
+
 
         buttonForm.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                FrameGetForm frameStaff = new FrameGetForm(productService);
                 frameStaff.setVisible(true);
             }
         });
