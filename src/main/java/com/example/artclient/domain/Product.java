@@ -18,6 +18,17 @@ public class Product {
     private int versionDate;
     private List<AssemblyUnit> assembliesUnits;
 
+    public Product(String designation, String name, int quantity,
+                   int level, int versionDate, List<AssemblyUnit> assembliesUnits) {
+
+    }
+    public Product(String[][] productForm) {
+        convertFormToProduct(productForm);
+    }
+
+    private void convertFormToProduct(String[][] productForm) {
+    }
+
     public String[][] getForm() {
 
         List<String[]> form = new ArrayList<>();

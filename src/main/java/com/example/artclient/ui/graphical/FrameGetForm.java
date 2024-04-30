@@ -13,13 +13,16 @@ public class FrameGetForm extends JFrame {
     private final PanelGetFormMain panelGetFormMain;
     private final ProductService productService;
     private Product product;
+    private String[][] stringArrProduct;
+    private final String[] columnsHeader = {"Изделие", "Ближайшая сборка", "Компонент",
+            "Уровень", "Кол. на изделие", "Кол. на ближайшую сборку", "Количество"};
     {
         panelGetFormMain = new PanelGetFormMain();
     }
     FrameGetForm(ProductService productService){
         super("Комплексные числа");
         this.productService=productService;
-        this.setSize(Toolkit.getDefaultToolkit().getScreenSize());
+        this.setSize(700, 1000);
         this.add(panelGetFormMain);
         panelGetFormMain.setVisible(true);
         panelGetFormMain.setBounds(0, 0, this.getWidth(), this.getHeight());
@@ -28,12 +31,13 @@ public class FrameGetForm extends JFrame {
     private class PanelGetFormMain extends JPanel {
         private final PanelInputData panelInputData;
         private final PanelTable panelTable;
-        private final String[] columnsHeader = {"Изделие", "Ближайшая сборка", "Компонент",
-                "Уровень", "Кол. на изделие", "Кол. на ближайшую сборку", "Количество"};
+        private final PanelButton panelButton;
+
 
         {
             panelInputData = new PanelInputData();
             panelTable = new PanelTable();
+            panelButton = new PanelButton();
         }
 
         private PanelGetFormMain() {
@@ -41,6 +45,8 @@ public class FrameGetForm extends JFrame {
             this.setLayout(new BorderLayout());
             this.add(panelInputData, BorderLayout.NORTH);
             this.add(panelTable, BorderLayout.CENTER);
+            this.add(panelButton, BorderLayout.SOUTH);
+            
         }
         private class PanelInputData extends JPanel {
             private final JLabel labelDesignation;
@@ -84,8 +90,9 @@ public class FrameGetForm extends JFrame {
                 int versionDate = Integer.parseInt(versionDateString.trim());
                 String designation = designationString.trim();
                 product = productService.sendGetRequestProduct(designation, versionDate);
+                stringArrProduct = product.getForm();
 
-                panelTable.tableForm.setModel(new DefaultTableModel(product.getForm(), columnsHeader));
+                panelTable.tableForm.setModel(new DefaultTableModel(stringArrProduct, columnsHeader));
             } catch (StringIndexOutOfBoundsException ex) {
                 JOptionPane.showMessageDialog(null,
                         "Заполните все поля", "Ошибка", JOptionPane.ERROR_MESSAGE);
@@ -97,25 +104,41 @@ public class FrameGetForm extends JFrame {
         public class PanelTable extends JPanel {
             private final JTable tableForm;
             private final JScrollPane scrollPane;
-            private final JButton buttonUpdate;
-            private final JButton buttonDelete;
+
+            {
+                tableForm =  new JTable();
+                scrollPane = new JScrollPane(tableForm);
+            }
+            
 
             private PanelTable() {
                 this.setLayout(new BorderLayout());
 
-                tableForm =  new JTable();
+                this.add(scrollPane, BorderLayout.CENTER);
+                
                 tableForm.setEnabled(false);
                 tableForm.getTableHeader().setReorderingAllowed(false);
-                scrollPane = new JScrollPane(tableForm);
+            }
+        }
+        private class PanelButton extends JPanel {
+            private final JButton buttonEdit;
+            private final JButton buttonDelete;
+            private final JButton buttonUpdate;
+            private boolean isEdit;
+            {
+                buttonEdit = new JButton("Редоктировать данные");
                 buttonUpdate = new JButton("Обновить данные");
                 buttonDelete = new JButton("Удалить продукт");
+                isEdit = false;
+            }
+            private PanelButton() {
+                this.setLayout(new GridLayout(1 ,3));
+                this.setBackground(Color.BLUE);
+                this.add(buttonEdit);
+                this.add(buttonUpdate);
+                this.add(buttonDelete);
 
-                JPanel buttonPanel = new JPanel(new BorderLayout());
-                buttonPanel.add(buttonUpdate, BorderLayout.WEST);
-                buttonPanel.add(buttonDelete, BorderLayout.EAST);
-
-                this.add(scrollPane, BorderLayout.CENTER);
-                this.add(buttonPanel, BorderLayout.SOUTH);
+                buttonUpdate.setEnabled(false);
 
                 buttonDelete.addActionListener(new ActionListener() {
 
@@ -138,16 +161,46 @@ public class FrameGetForm extends JFrame {
                     }
                 });
 
+                buttonEdit.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        if (isEdit) {
+                            isEdit = false;
+                            buttonEdit.setText("Редоктировать данные");
+                            panelTable.tableForm.setEnabled(false);
+                            buttonUpdate.setEnabled(false);
+                            panelTable.tableForm.setModel(new DefaultTableModel(stringArrProduct, columnsHeader));
+                        } else {
+                            isEdit = true;
+                            buttonEdit.setText("Отменить изменения");
+                            panelTable.tableForm.setEnabled(true);
+                            buttonUpdate.setEnabled(true);
+                        }
+                    }
+                });
                 buttonUpdate.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
+                        DefaultTableModel model = (DefaultTableModel) panelTable.tableForm.getModel();
+                        int rowCount = model.getRowCount();
+                        int columnCount = model.getColumnCount();
+                        String[][] data = new String[rowCount][columnCount];
 
+                        for (int i = 0; i < rowCount; i++) {
+                            for (int j = 0; j < columnCount; j++) {
+                                data[i][j] = (String) model.getValueAt(i, j);
+                            }
+                        }
+                        Product newProduct = new Product(data);
+                        product = productService.sendPutRequestProduct(product.getId(), newProduct);
+                        stringArrProduct = product.getForm();
+                        panelTable.tableForm.setModel(new DefaultTableModel(stringArrProduct, columnsHeader));
                     }
                 });
             }
             private void deleteProduct() {
                 productService.sendDeleteRequestProduct(product);
-                tableForm.setModel(new DefaultTableModel());
+                panelTable.tableForm.setModel(new DefaultTableModel());
                 product = null;
                 JOptionPane.showMessageDialog(null, "Продукт успешно удален", "Успех", JOptionPane.INFORMATION_MESSAGE);
             }
