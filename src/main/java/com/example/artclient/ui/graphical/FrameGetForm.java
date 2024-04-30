@@ -22,7 +22,7 @@ public class FrameGetForm extends JFrame {
     FrameGetForm(ProductService productService){
         super("Комплексные числа");
         this.productService=productService;
-        this.setSize(700, 1000);
+        this.setSize(1000, 700);
         this.add(panelGetFormMain);
         panelGetFormMain.setVisible(true);
         panelGetFormMain.setBounds(0, 0, this.getWidth(), this.getHeight());
@@ -144,7 +144,6 @@ public class FrameGetForm extends JFrame {
 
                     @Override
                     public void actionPerformed(ActionEvent e) {
-
                         if (product!=null) {
                             int result = JOptionPane.showConfirmDialog(null,
                                     "Вы уверены, что хотите удалить продукт "
@@ -164,37 +163,42 @@ public class FrameGetForm extends JFrame {
                 buttonEdit.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        if (isEdit) {
-                            isEdit = false;
-                            buttonEdit.setText("Редоктировать данные");
-                            panelTable.tableForm.setEnabled(false);
-                            buttonUpdate.setEnabled(false);
-                            panelTable.tableForm.setModel(new DefaultTableModel(stringArrProduct, columnsHeader));
+                        if (product!=null) {
+                            if (isEdit) {
+                                isEdit = false;
+                                buttonEdit.setText("Редоктировать данные");
+                                panelTable.tableForm.setEnabled(false);
+                                buttonUpdate.setEnabled(false);
+                                panelTable.tableForm.setModel(new DefaultTableModel(stringArrProduct, columnsHeader));
+                            } else {
+                                JOptionPane.showMessageDialog(null,
+                                        "В программе реализована возможность" +
+                                                " изменять только количество деталей\n" +
+                                                "Вы можете изменить данные в столбце \"Количество\"",
+                                        "Ошибка", JOptionPane.ERROR_MESSAGE);
+                                isEdit = true;
+                                buttonEdit.setText("Отменить изменения");
+                                panelTable.tableForm.setEnabled(true);
+                                buttonUpdate.setEnabled(true);
+                            }
                         } else {
-                            isEdit = true;
-                            buttonEdit.setText("Отменить изменения");
-                            panelTable.tableForm.setEnabled(true);
-                            buttonUpdate.setEnabled(true);
+                            JOptionPane.showMessageDialog(null,
+                                    "Выберете изделие", "Ошибка", JOptionPane.ERROR_MESSAGE);
                         }
                     }
                 });
                 buttonUpdate.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        DefaultTableModel model = (DefaultTableModel) panelTable.tableForm.getModel();
-                        int rowCount = model.getRowCount();
-                        int columnCount = model.getColumnCount();
-                        String[][] data = new String[rowCount][columnCount];
-
-                        for (int i = 0; i < rowCount; i++) {
-                            for (int j = 0; j < columnCount; j++) {
-                                data[i][j] = (String) model.getValueAt(i, j);
-                            }
+                        int result = JOptionPane.showConfirmDialog(null,
+                                "Вы уверены, что хотите изменить данные продукта "
+                                        + product.getDesignation()+ " " + product.getName() + "?",
+                                "Подтверждение удаления",
+                                JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+                        if (result == JOptionPane.YES_OPTION) {
+                            updateProduct();
                         }
-                        Product newProduct = new Product(data);
-                        product = productService.sendPutRequestProduct(product.getId(), newProduct);
-                        stringArrProduct = product.getForm();
-                        panelTable.tableForm.setModel(new DefaultTableModel(stringArrProduct, columnsHeader));
+
                     }
                 });
             }
@@ -204,6 +208,23 @@ public class FrameGetForm extends JFrame {
                 product = null;
                 JOptionPane.showMessageDialog(null, "Продукт успешно удален", "Успех", JOptionPane.INFORMATION_MESSAGE);
             }
+            private void updateProduct() {
+                DefaultTableModel model = (DefaultTableModel) panelTable.tableForm.getModel();
+                int rowCount = model.getRowCount();
+                int columnCount = model.getColumnCount();
+                String[][] data = new String[rowCount][columnCount];
+
+                for (int i = 0; i < rowCount; i++) {
+                    for (int j = 0; j < columnCount; j++) {
+                        data[i][j] = (String) model.getValueAt(i, j);
+                    }
+                }
+                Product newProduct = new Product(data);
+                product = productService.sendPutRequestProduct(product.getId(), newProduct);
+                stringArrProduct = product.getForm();
+                panelTable.tableForm.setModel(new DefaultTableModel(stringArrProduct, columnsHeader));
+            }
+
         }
     }
 }
