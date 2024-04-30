@@ -104,6 +104,8 @@ public class FrameGetForm extends JFrame {
                 this.setLayout(new BorderLayout());
 
                 tableForm =  new JTable();
+                tableForm.setEnabled(false);
+                tableForm.getTableHeader().setReorderingAllowed(false);
                 scrollPane = new JScrollPane(tableForm);
                 buttonUpdate = new JButton("Обновить данные");
                 buttonDelete = new JButton("Удалить продукт");
@@ -122,7 +124,9 @@ public class FrameGetForm extends JFrame {
 
                         if (product!=null) {
                             int result = JOptionPane.showConfirmDialog(null,
-                                    "Вы уверены, что хотите удалить продукт?", "Подтверждение удаления",
+                                    "Вы уверены, что хотите удалить продукт "
+                                            + product.getDesignation()+ " " + product.getName() + "?",
+                                    "Подтверждение удаления",
                                     JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
                             if (result == JOptionPane.YES_OPTION) {
                                 deleteProduct();
@@ -131,6 +135,13 @@ public class FrameGetForm extends JFrame {
                             JOptionPane.showMessageDialog(null,
                                     "Выберете изделие", "Ошибка", JOptionPane.ERROR_MESSAGE);
                         }
+                    }
+                });
+
+                buttonUpdate.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+
                     }
                 });
             }

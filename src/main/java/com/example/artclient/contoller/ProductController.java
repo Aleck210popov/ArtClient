@@ -95,7 +95,7 @@ public class ProductController {
             return null;
         }
     }
-    public static void deleteProduct(long id) {
+    public static void sendDeleteRequestProduct(long id) {
         // Создаем HTTP клиент
         HttpClient httpClient = HttpClient.newHttpClient();
 
@@ -111,12 +111,46 @@ public class ProductController {
 
             // Проверяем код ответа
             if (response.statusCode() == 200) {
+
                 System.out.println("Product successfully deleted.");
             } else {
                 System.err.println("Error: " + response.statusCode());
             }
         } catch (Exception e) {
             System.err.println("Error: " + e.getMessage());
+        }
+    }
+    public static ProductDto sendPutRequestProduct(long id, ProductDto productDto) {
+
+        Gson gson = new Gson();
+        String jsonData = gson.toJson(productDto);
+        // Создаем HTTP клиент
+        HttpClient httpClient = HttpClient.newHttpClient();
+
+        // Создаем запрос к серверу
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(BASE_URL + ENDPOINT + ID + "/" + id))
+                .PUT(HttpRequest.BodyPublishers.ofString(jsonData))
+                .build();
+
+        // Отправляем запрос и получаем ответ
+        try {
+            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+
+            // Проверяем код ответа
+            if (response.statusCode() == 200) {
+                System.out.println("Product successfully deleted.");
+                Gson gsonReturn = new Gson();
+                return gson.fromJson(response.body(), ProductDto.class);
+
+
+            } else {
+                System.err.println("Error: " + response.statusCode());
+                return null;
+            }
+        } catch (Exception e) {
+            System.err.println("Error: " + e.getMessage());
+            return null;
         }
     }
 }

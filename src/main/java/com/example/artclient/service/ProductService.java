@@ -22,8 +22,18 @@ public class ProductService {
     }
 
     public void sendDeleteRequestProduct (Product product) {
-        ProductController.deleteProduct(product.getId());
+        ProductController.sendDeleteRequestProduct(product.getId());
     }
+    public Product sendPutRequestProduct (Product product) {
+
+        ProductDto productDto = ProductController.sendPutRequestProduct(product.getId(),
+                ProductMapper.toProductDto(product));
+        if (productDto == null) {
+            throw new ProductNotFoundOnServerException("Продукт не найден на сервере");
+        }
+        return ProductMapper.toProductEntity(productDto);
+    }
+
 
 
 }
