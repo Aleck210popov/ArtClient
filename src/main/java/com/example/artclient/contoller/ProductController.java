@@ -37,13 +37,42 @@ public class ProductController {
             System.err.println("Error: " + e.getMessage());
         }
     }
-    public static String[][] sendGetRequestForm(String designation, int versionDate) {
+//    public static String[][] sendGetRequestForm(String designation, int versionDate) {
+//        // Создаем HTTP клиент
+//        HttpClient httpClient = HttpClient.newHttpClient();
+//
+//        // Создаем запрос к серверу
+//        HttpRequest request = HttpRequest.newBuilder()
+//                .uri(URI.create(BASE_URL + ENDPOINT + FORM + "/designation/" + designation + "/version/" + versionDate))
+//                .header("Content-Type", "application/json")
+//                .GET()
+//                .build();
+//
+//        // Отправляем запрос и получаем ответ
+//        try {
+//            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+//
+//            // Проверяем код ответа
+//            if (response.statusCode() == 200) {
+//                // Преобразуем JSON в массив строк
+//                Gson gson = new Gson();
+//                return gson.fromJson(response.body(), String[][].class);
+//            } else {
+//                System.err.println("Error: " + response.statusCode());
+//                return null;
+//            }
+//        } catch (Exception e) {
+//            System.err.println("Error: " + e.getMessage());
+//            return null;
+//        }
+//    }
+    public static ProductDto sendGetRequestProduct(String designation, int versionDate) {
         // Создаем HTTP клиент
         HttpClient httpClient = HttpClient.newHttpClient();
 
         // Создаем запрос к серверу
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(BASE_URL + ENDPOINT + FORM + "/designation/" + designation + "/version/" + versionDate))
+                .uri(URI.create(BASE_URL + ENDPOINT  + DESIGNATION + "/" + designation + VERSION + "/" + versionDate))
                 .header("Content-Type", "application/json")
                 .GET()
                 .build();
@@ -56,7 +85,7 @@ public class ProductController {
             if (response.statusCode() == 200) {
                 // Преобразуем JSON в массив строк
                 Gson gson = new Gson();
-                return gson.fromJson(response.body(), String[][].class);
+                return gson.fromJson(response.body(), ProductDto.class);
             } else {
                 System.err.println("Error: " + response.statusCode());
                 return null;
@@ -64,6 +93,30 @@ public class ProductController {
         } catch (Exception e) {
             System.err.println("Error: " + e.getMessage());
             return null;
+        }
+    }
+    public static void deleteProduct(long id) {
+        // Создаем HTTP клиент
+        HttpClient httpClient = HttpClient.newHttpClient();
+
+        // Создаем запрос к серверу
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(BASE_URL + ENDPOINT + ID + "/" + id))
+                .DELETE()
+                .build();
+
+        // Отправляем запрос и получаем ответ
+        try {
+            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+
+            // Проверяем код ответа
+            if (response.statusCode() == 200) {
+                System.out.println("Product successfully deleted.");
+            } else {
+                System.err.println("Error: " + response.statusCode());
+            }
+        } catch (Exception e) {
+            System.err.println("Error: " + e.getMessage());
         }
     }
 }
