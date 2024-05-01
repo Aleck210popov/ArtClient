@@ -8,15 +8,21 @@ import com.example.artclient.exception.ProductWasNotSavedException;
 import com.example.artclient.mapper.ProductMapper;
 
 public class ProductService {
+    private final ProductController productController;
+
+    public ProductService() {
+        this.productController = new ProductController();
+    }
+
     public Product sendPostRequestProduct (Product product) {
-        ProductDto productDto = ProductController.sendPostRequestProduct(ProductMapper.toProductDto(product));
+        ProductDto productDto = productController.sendPostRequestProduct(ProductMapper.toProductDto(product));
         if (productDto == null) {
             throw new ProductNotFoundOnServerException("Продукт не найден на сервере");
         }
         return ProductMapper.toProductEntity(productDto);
     }
     public Product sendGetRequestProduct (String designation, int versionDate) {
-        ProductDto productDto = ProductController.sendGetRequestProduct(designation, versionDate);
+        ProductDto productDto = productController.sendGetRequestProduct(designation, versionDate);
         if (productDto == null) {
             throw new ProductWasNotSavedException("Продукт не сохранился");
         }
@@ -24,11 +30,11 @@ public class ProductService {
     }
 
     public void sendDeleteRequestProduct (Product product) {
-        ProductController.sendDeleteRequestProduct(product.getId());
+        productController.sendDeleteRequestProduct(product.getId());
     }
     public Product sendPutRequestProduct (long id, Product product) {
 
-        ProductDto productDto = ProductController.sendPutRequestProduct(id,
+        ProductDto productDto = productController.sendPutRequestProduct(id,
                 ProductMapper.toProductDto(product));
         if (productDto == null) {
             throw new ProductNotFoundOnServerException("Продукт не найден на сервере");

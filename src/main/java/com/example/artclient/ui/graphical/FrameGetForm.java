@@ -1,6 +1,8 @@
 package com.example.artclient.ui.graphical;
 
 import com.example.artclient.domain.Product;
+import com.example.artclient.exception.IncorrectDatesException;
+import com.example.artclient.exception.StringIsEmptyException;
 import com.example.artclient.service.ProductService;
 
 import javax.swing.*;
@@ -92,20 +94,27 @@ public class FrameGetForm extends JFrame {
         private void getForm(String designationString, String versionDateString) {
             try {
                 if (designationString.isEmpty() || versionDateString.isEmpty()) {
-                    throw new StringIndexOutOfBoundsException();
+                    throw new StringIsEmptyException("Введённые строки пустые");
                 }
                 int versionDate = Integer.parseInt(versionDateString.trim());
+                if (versionDate > 2030 || versionDate < 1950) {
+                    throw new IncorrectDatesException("Не корректные даты");
+                }
                 String designation = designationString.trim();
                 product = productService.sendGetRequestProduct(designation, versionDate);
                 stringArrProduct = product.getForm();
 
                 panelTable.tableForm.setModel(new DefaultTableModel(stringArrProduct, columnsHeader));
-            } catch (StringIndexOutOfBoundsException ex) {
+            } catch (StringIsEmptyException ex) {
                 JOptionPane.showMessageDialog(null,
                         "Заполните все поля", "Ошибка", JOptionPane.ERROR_MESSAGE);
             } catch (NumberFormatException ex) {
                 JOptionPane.showMessageDialog(null,
                         "Введите корректные значения", "Ошибка", JOptionPane.ERROR_MESSAGE);
+            } catch (IncorrectDatesException ex) {
+                JOptionPane.showMessageDialog(null,
+                        "Дата изготовления детали может быть выбрана " +
+                                "от 1950 до 2030", "Ошибка", JOptionPane.ERROR_MESSAGE);
             }
         }
         private class PanelTable extends JPanel {

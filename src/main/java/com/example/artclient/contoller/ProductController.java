@@ -11,7 +11,10 @@ import java.net.http.HttpResponse;
 import static com.example.artclient.constant.Constant.*;
 
 public class ProductController {
-    public static ProductDto sendPostRequestProduct(ProductDto productDto) {
+    public ProductController() {
+    }
+
+    public ProductDto sendPostRequestProduct(ProductDto productDto) {
         // Преобразуем объект в строку JSON
         Gson gson = new Gson();
         String jsonData = gson.toJson(productDto);
@@ -45,7 +48,7 @@ public class ProductController {
             return null;
         }
     }
-    public static ProductDto sendGetRequestProduct(String designation, int versionDate) {
+    public ProductDto sendGetRequestProduct(String designation, int versionDate) {
         // Создаем HTTP клиент
         HttpClient httpClient = HttpClient.newHttpClient();
 
@@ -67,6 +70,9 @@ public class ProductController {
                 return gson.fromJson(response.body(), ProductDto.class);
             } else {
                 System.err.println("Error: " + response.statusCode());
+//                ProductDto errorResponse = new ProductDto();
+//                errorResponse.setErrorMessage("Объект не найден на сервере");
+//                return errorResponse;
                 return null;
             }
         } catch (Exception e) {
@@ -74,7 +80,7 @@ public class ProductController {
             return null;
         }
     }
-    public static void sendDeleteRequestProduct(long id) {
+    public void sendDeleteRequestProduct(long id) {
         // Создаем HTTP клиент
         HttpClient httpClient = HttpClient.newHttpClient();
 
@@ -99,7 +105,7 @@ public class ProductController {
             System.err.println("Error: " + e.getMessage());
         }
     }
-    public static ProductDto sendPutRequestProduct(long id, ProductDto productDto) {
+    public ProductDto sendPutRequestProduct(long id, ProductDto productDto) {
 
         Gson gson = new Gson();
         String jsonData = gson.toJson(productDto);
