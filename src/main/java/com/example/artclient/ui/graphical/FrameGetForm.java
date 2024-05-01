@@ -140,23 +140,19 @@ public class FrameGetForm extends JFrame {
 
                 buttonUpdate.setEnabled(false);
 
-                buttonDelete.addActionListener(new ActionListener() {
-
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        if (product!=null) {
-                            int result = JOptionPane.showConfirmDialog(null,
-                                    "Вы уверены, что хотите удалить продукт "
-                                            + product.getDesignation()+ " " + product.getName() + "?",
-                                    "Подтверждение удаления",
-                                    JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-                            if (result == JOptionPane.YES_OPTION) {
-                                deleteProduct();
-                            }
-                        } else {
-                            JOptionPane.showMessageDialog(null,
-                                    "Выберете изделие", "Ошибка", JOptionPane.ERROR_MESSAGE);
+                buttonDelete.addActionListener(e -> {
+                    if (product!=null) {
+                        int result = JOptionPane.showConfirmDialog(null,
+                                "Вы уверены, что хотите удалить продукт "
+                                        + product.getDesignation()+ " " + product.getName() + "?",
+                                "Подтверждение удаления",
+                                JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+                        if (result == JOptionPane.YES_OPTION) {
+                            deleteProduct();
                         }
+                    } else {
+                        JOptionPane.showMessageDialog(null,
+                                "Выберете изделие", "Ошибка", JOptionPane.ERROR_MESSAGE);
                     }
                 });
 
@@ -187,19 +183,16 @@ public class FrameGetForm extends JFrame {
                         }
                     }
                 });
-                buttonUpdate.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        int result = JOptionPane.showConfirmDialog(null,
-                                "Вы уверены, что хотите изменить данные продукта "
-                                        + product.getDesignation()+ " " + product.getName() + "?",
-                                "Подтверждение удаления",
-                                JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-                        if (result == JOptionPane.YES_OPTION) {
-                            updateProduct();
-                        }
-
+                buttonUpdate.addActionListener(e -> {
+                    int result = JOptionPane.showConfirmDialog(null,
+                            "Вы уверены, что хотите изменить данные продукта "
+                                    + product.getDesignation()+ " " + product.getName() + "?",
+                            "Подтверждение удаления",
+                            JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+                    if (result == JOptionPane.YES_OPTION) {
+                        updateProduct();
                     }
+
                 });
             }
             private void deleteProduct() {
@@ -219,7 +212,7 @@ public class FrameGetForm extends JFrame {
                         data[i][j] = (String) model.getValueAt(i, j);
                     }
                 }
-                Product newProduct = new Product(data);
+                Product newProduct = new Product(data, product);
                 product = productService.sendPutRequestProduct(product.getId(), newProduct);
                 stringArrProduct = product.getForm();
                 panelTable.tableForm.setModel(new DefaultTableModel(stringArrProduct, columnsHeader));

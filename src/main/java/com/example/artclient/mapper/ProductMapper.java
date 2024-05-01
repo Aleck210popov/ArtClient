@@ -71,7 +71,6 @@ public class ProductMapper {
     public ProductDto toProductDto(Product product) {
 
         ProductDto productDto = ProductDto.builder()
-                .id(product.getId())
                 .designation(product.getDesignation())
                 .name(product.getName())
                 .quantity(product.getQuantity())

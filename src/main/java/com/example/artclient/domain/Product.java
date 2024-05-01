@@ -20,13 +20,55 @@ public class Product {
 
     public Product(String designation, String name, int quantity,
                    int level, int versionDate, List<AssemblyUnit> assembliesUnits) {
-
+        this.designation = designation;
+        this.name = name;
+        this.quantity = quantity;
+        this.level = level;
+        this.versionDate = versionDate;
+        this.assembliesUnits = assembliesUnits;
     }
-    public Product(String[][] productForm) {
-        convertFormToProduct(productForm);
+
+    public Product(String[][] productForm, Product product) {
+        convertFormToProduct(productForm, product);
     }
 
-    private void convertFormToProduct(String[][] productForm) {
+    private void convertFormToProduct(String[][] productForm, Product product) {
+        int index = 0;
+        this.designation = product.getDesignation();
+        this.name = product.getName();
+        this.quantity = Integer.parseInt(productForm[index][6]);
+        index++;
+        this.level = product.getLevel();
+        this.versionDate = product.getVersionDate();
+
+        List<AssemblyUnit> updatedAssemblies = new ArrayList<>();
+        for (AssemblyUnit assemblyUnit : product.assembliesUnits) {
+
+            AssemblyUnit updatedAssembly = new AssemblyUnit();
+            updatedAssembly.setDesignation(assemblyUnit.getDesignation());
+            updatedAssembly.setName(assemblyUnit.getName());
+            updatedAssembly.setLevel(assemblyUnit.getLevel());
+            updatedAssembly.setVersionDate(assemblyUnit.getVersionDate());
+            updatedAssembly.setQuantity(Integer.parseInt(productForm[index][6]));
+            index++;
+
+            List<Part> updatedParts = new ArrayList<>();
+            for (Part part : assemblyUnit.getParts()) {
+                Part updatedPart = new Part();
+                updatedPart.setDesignation(part.getDesignation());
+                updatedPart.setName(part.getName());
+                updatedPart.setLevel(part.getLevel());
+                updatedPart.setVersionDate(part.getVersionDate());
+                updatedPart.setQuantity(Integer.parseInt(productForm[index][6]));
+                index++;
+
+                updatedParts.add(updatedPart);
+            }
+            updatedAssembly.setParts(updatedParts);
+
+            updatedAssemblies.add(updatedAssembly);
+        }
+        this.assembliesUnits = updatedAssemblies;
     }
 
     public String[][] getForm() {

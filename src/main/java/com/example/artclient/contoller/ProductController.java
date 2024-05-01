@@ -141,11 +141,11 @@ public class ProductController {
             if (response.statusCode() == 200) {
                 System.out.println("Product successfully deleted.");
                 Gson gsonReturn = new Gson();
-                return gson.fromJson(response.body(), ProductDto.class);
+                return gsonReturn.fromJson(response.body(), ProductDto.class);
 
 
             } else {
-                System.err.println("Error: " + response.statusCode());
+                System.err.println("Error tre: " + response.statusCode());
                 return null;
             }
         } catch (Exception e) {
