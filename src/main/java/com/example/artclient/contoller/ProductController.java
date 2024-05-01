@@ -37,35 +37,6 @@ public class ProductController {
             System.err.println("Error: " + e.getMessage());
         }
     }
-//    public static String[][] sendGetRequestForm(String designation, int versionDate) {
-//        // Создаем HTTP клиент
-//        HttpClient httpClient = HttpClient.newHttpClient();
-//
-//        // Создаем запрос к серверу
-//        HttpRequest request = HttpRequest.newBuilder()
-//                .uri(URI.create(BASE_URL + ENDPOINT + FORM + "/designation/" + designation + "/version/" + versionDate))
-//                .header("Content-Type", "application/json")
-//                .GET()
-//                .build();
-//
-//        // Отправляем запрос и получаем ответ
-//        try {
-//            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-//
-//            // Проверяем код ответа
-//            if (response.statusCode() == 200) {
-//                // Преобразуем JSON в массив строк
-//                Gson gson = new Gson();
-//                return gson.fromJson(response.body(), String[][].class);
-//            } else {
-//                System.err.println("Error: " + response.statusCode());
-//                return null;
-//            }
-//        } catch (Exception e) {
-//            System.err.println("Error: " + e.getMessage());
-//            return null;
-//        }
-//    }
     public static ProductDto sendGetRequestProduct(String designation, int versionDate) {
         // Создаем HTTP клиент
         HttpClient httpClient = HttpClient.newHttpClient();
@@ -130,6 +101,7 @@ public class ProductController {
         // Создаем запрос к серверу
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(BASE_URL + ENDPOINT + ID + "/" + id))
+                .header("Content-Type", "application/json")
                 .PUT(HttpRequest.BodyPublishers.ofString(jsonData))
                 .build();
 
@@ -139,13 +111,13 @@ public class ProductController {
 
             // Проверяем код ответа
             if (response.statusCode() == 200) {
-                System.out.println("Product successfully deleted.");
+                System.out.println("Product successfully update.");
                 Gson gsonReturn = new Gson();
                 return gsonReturn.fromJson(response.body(), ProductDto.class);
 
 
             } else {
-                System.err.println("Error tre: " + response.statusCode());
+                System.err.println("Error status code: " + response.statusCode());
                 return null;
             }
         } catch (Exception e) {

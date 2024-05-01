@@ -20,7 +20,7 @@ public class FrameGetForm extends JFrame {
         panelGetFormMain = new PanelGetFormMain();
     }
     FrameGetForm(ProductService productService){
-        super("Комплексные числа");
+        super("Таблица изделие");
         this.productService=productService;
         this.setSize(1000, 700);
         this.add(panelGetFormMain);
@@ -79,7 +79,14 @@ public class FrameGetForm extends JFrame {
                     }
                 });
 
-                buttonClear.addActionListener(e -> panelTable.tableForm.setModel(new DefaultTableModel()));
+                buttonClear.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        panelTable.tableForm.setModel(new DefaultTableModel());
+                        inputFieldDesignation.setText(null);
+                        inputFieldVersion.setText(null);
+                    }
+                });
             }
         }
         private void getForm(String designationString, String versionDateString) {
@@ -104,9 +111,19 @@ public class FrameGetForm extends JFrame {
         public class PanelTable extends JPanel {
             private final JTable tableForm;
             private final JScrollPane scrollPane;
+            private boolean quantityEditingEnabled;
 
             {
-                tableForm =  new JTable();
+                this.quantityEditingEnabled = false;
+                tableForm =  new JTable() {
+                    @Override
+                    public boolean isCellEditable(int row, int column) {
+                        if (column == 6) {
+                            return quantityEditingEnabled;
+                        }
+                        return false;
+                    }
+                };
                 scrollPane = new JScrollPane(tableForm);
             }
             
@@ -115,8 +132,6 @@ public class FrameGetForm extends JFrame {
                 this.setLayout(new BorderLayout());
 
                 this.add(scrollPane, BorderLayout.CENTER);
-                
-                tableForm.setEnabled(false);
                 tableForm.getTableHeader().setReorderingAllowed(false);
             }
         }
@@ -163,7 +178,7 @@ public class FrameGetForm extends JFrame {
                             if (isEdit) {
                                 isEdit = false;
                                 buttonEdit.setText("Редоктировать данные");
-                                panelTable.tableForm.setEnabled(false);
+                                panelTable.quantityEditingEnabled = false;
                                 buttonUpdate.setEnabled(false);
                                 panelTable.tableForm.setModel(new DefaultTableModel(stringArrProduct, columnsHeader));
                             } else {
@@ -174,7 +189,7 @@ public class FrameGetForm extends JFrame {
                                         "Ошибка", JOptionPane.ERROR_MESSAGE);
                                 isEdit = true;
                                 buttonEdit.setText("Отменить изменения");
-                                panelTable.tableForm.setEnabled(true);
+                                panelTable.quantityEditingEnabled = true;
                                 buttonUpdate.setEnabled(true);
                             }
                         } else {
@@ -190,6 +205,11 @@ public class FrameGetForm extends JFrame {
                             "Подтверждение удаления",
                             JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
                     if (result == JOptionPane.YES_OPTION) {
+                        isEdit = false;
+                        buttonEdit.setText("Редоктировать данные");
+                        panelInputData.inputFieldDesignation.setText(null);
+                        panelInputData.inputFieldVersion.setText(null);
+                        buttonUpdate.setEnabled(false);
                         updateProduct();
                     }
 

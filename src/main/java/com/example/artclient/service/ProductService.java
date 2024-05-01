@@ -9,7 +9,7 @@ import com.example.artclient.mapper.ProductMapper;
 import java.util.*;
 
 public class ProductService {
-    public void sendPostRequest (Product product) {
+    public void sendPostRequestProduct (Product product) {
         ProductController.sendPostRequest(ProductMapper.toProductDto(product));
     }
 
