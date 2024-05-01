@@ -19,5 +19,5 @@ public class ProductDto {
     private int level;
     private int versionDate;
     private List<AssemblyUnitDto> assembliesUnitsDto;
-//    private String errorMessage;
+    private String errorMessage;
 }

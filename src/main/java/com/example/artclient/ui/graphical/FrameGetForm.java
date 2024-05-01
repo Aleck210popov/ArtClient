@@ -2,6 +2,7 @@ package com.example.artclient.ui.graphical;
 
 import com.example.artclient.domain.Product;
 import com.example.artclient.exception.IncorrectDatesException;
+import com.example.artclient.exception.ProductNotFoundOnServerException;
 import com.example.artclient.exception.StringIsEmptyException;
 import com.example.artclient.service.ProductService;
 
@@ -101,7 +102,11 @@ public class FrameGetForm extends JFrame {
                     throw new IncorrectDatesException("Не корректные даты");
                 }
                 String designation = designationString.trim();
-                product = productService.sendGetRequestProduct(designation, versionDate);
+                Product productReturn = productService.sendGetRequestProduct(designation, versionDate);
+                if (productReturn == null) {
+                    throw new ProductNotFoundOnServerException();
+                }
+                product = productReturn;
                 stringArrProduct = product.getForm();
 
                 panelTable.tableForm.setModel(new DefaultTableModel(stringArrProduct, columnsHeader));
@@ -115,6 +120,12 @@ public class FrameGetForm extends JFrame {
                 JOptionPane.showMessageDialog(null,
                         "Дата изготовления детали может быть выбрана " +
                                 "от 1950 до 2030", "Ошибка", JOptionPane.ERROR_MESSAGE);
+            } catch (ProductNotFoundOnServerException ex) {
+                JOptionPane.showMessageDialog(null,
+                        "Продукт не удалось найти на сервере,\n " +
+                                "попробуйте изменить конструкторное обозначение " +
+                                "или поставьте более позднюю дату версии",
+                        "Ошибка", JOptionPane.ERROR_MESSAGE);
             }
         }
         private class PanelTable extends JPanel {

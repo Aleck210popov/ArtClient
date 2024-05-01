@@ -17,16 +17,20 @@ public class ProductService {
     public Product sendPostRequestProduct (Product product) {
         ProductDto productDto = productController.sendPostRequestProduct(ProductMapper.toProductDto(product));
         if (productDto == null) {
-            throw new ProductNotFoundOnServerException("Продукт не найден на сервере");
+            throw new ProductWasNotSavedException("Не удалось сохранить продукт");
         }
         return ProductMapper.toProductEntity(productDto);
     }
     public Product sendGetRequestProduct (String designation, int versionDate) {
-        ProductDto productDto = productController.sendGetRequestProduct(designation, versionDate);
-        if (productDto == null) {
-            throw new ProductWasNotSavedException("Продукт не сохранился");
+        try {
+            ProductDto productDto = productController.sendGetRequestProduct(designation, versionDate);
+            if (productDto.getErrorMessage()!=null) {
+                throw new ProductNotFoundOnServerException(productDto.getErrorMessage());
+            }
+            return ProductMapper.toProductEntity(productDto);
+        } catch (ProductNotFoundOnServerException e) {
+            return null;
         }
-        return ProductMapper.toProductEntity(productDto);
     }
 
     public void sendDeleteRequestProduct (Product product) {

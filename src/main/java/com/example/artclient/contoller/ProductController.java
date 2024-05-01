@@ -69,15 +69,16 @@ public class ProductController {
                 Gson gson = new Gson();
                 return gson.fromJson(response.body(), ProductDto.class);
             } else {
-                System.err.println("Error: " + response.statusCode());
-//                ProductDto errorResponse = new ProductDto();
-//                errorResponse.setErrorMessage("Объект не найден на сервере");
-//                return errorResponse;
-                return null;
+                System.err.println("Error status code: " + response.statusCode());
+                ProductDto errorResponse = new ProductDto();
+                errorResponse.setErrorMessage("Объект не найден на сервере");
+                return errorResponse;
             }
         } catch (Exception e) {
+            ProductDto errorResponse = new ProductDto();
+            errorResponse.setErrorMessage("Сервер не отвечает");
             System.err.println("Error: " + e.getMessage());
-            return null;
+            return errorResponse;
         }
     }
     public void sendDeleteRequestProduct(long id) {
