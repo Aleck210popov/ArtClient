@@ -108,7 +108,7 @@ public class FrameGetForm extends JFrame {
                         "Введите корректные значения", "Ошибка", JOptionPane.ERROR_MESSAGE);
             }
         }
-        public class PanelTable extends JPanel {
+        private class PanelTable extends JPanel {
             private final JTable tableForm;
             private final JScrollPane scrollPane;
             private boolean quantityEditingEnabled;
@@ -163,6 +163,8 @@ public class FrameGetForm extends JFrame {
                                 "Подтверждение удаления",
                                 JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
                         if (result == JOptionPane.YES_OPTION) {
+                            panelInputData.inputFieldDesignation.setText(null);
+                            panelInputData.inputFieldVersion.setText(null);
                             deleteProduct();
                         }
                     } else {
@@ -185,7 +187,7 @@ public class FrameGetForm extends JFrame {
                                 JOptionPane.showMessageDialog(null,
                                         "В программе реализована возможность" +
                                                 " изменять только количество деталей\n" +
-                                                "Вы можете изменить данные в столбце \"Количество\"",
+                                                "Вы можете изменить данные в столбце \"Количество\".",
                                         "Ошибка", JOptionPane.ERROR_MESSAGE);
                                 isEdit = true;
                                 buttonEdit.setText("Отменить изменения");

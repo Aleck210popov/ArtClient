@@ -11,7 +11,7 @@ import java.net.http.HttpResponse;
 import static com.example.artclient.constant.Constant.*;
 
 public class ProductController {
-    public static void sendPostRequest(ProductDto productDto) {
+    public static ProductDto sendPostRequestProduct(ProductDto productDto) {
         // Преобразуем объект в строку JSON
         Gson gson = new Gson();
         String jsonData = gson.toJson(productDto);
@@ -22,7 +22,7 @@ public class ProductController {
         // Создаем запрос к серверу
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(BASE_URL + ENDPOINT))
-                .header("Accept", "application/json")
+                .header("Content-Type", "application/json")
                 .POST(HttpRequest.BodyPublishers.ofString(jsonData))
                 .build();
 
@@ -30,11 +30,19 @@ public class ProductController {
         try {
             HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 
-            // Выводим ответ в консоль
-            System.out.println("Response Code: " + response.statusCode());
-            System.out.println("Response Body: " + response.body());
+            // Проверяем статус-код ответа
+            if (response.statusCode() == 200) {
+                // Возвращаем объект Gson, который пришел с сервера
+                return gson.fromJson(response.body(), ProductDto.class);
+            } else {
+                // Если получен неправильный статус-код, выводим его в консоль
+                System.err.println("Error status code: " + response.statusCode());
+                return null;
+            }
         } catch (Exception e) {
+            // Если произошла ошибка при отправке запроса, выводим её в консоль
             System.err.println("Error: " + e.getMessage());
+            return null;
         }
     }
     public static ProductDto sendGetRequestProduct(String designation, int versionDate) {
@@ -112,8 +120,7 @@ public class ProductController {
             // Проверяем код ответа
             if (response.statusCode() == 200) {
                 System.out.println("Product successfully update.");
-                Gson gsonReturn = new Gson();
-                return gsonReturn.fromJson(response.body(), ProductDto.class);
+                return gson.fromJson(response.body(), ProductDto.class);
 
 
             } else {

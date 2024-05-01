@@ -4,8 +4,6 @@ import com.example.artclient.service.ProductService;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 public class FrameMain extends JFrame {
     private final JPanel panelMaster;
@@ -29,19 +27,13 @@ public class FrameMain extends JFrame {
         buttonNewProduct.setBounds(100 , 215, this.getWidth()-200, this.getHeight()-300);
 
 
-        buttonForm.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                FrameGetForm frameStaff = new FrameGetForm(productService);
-                frameStaff.setVisible(true);
-            }
+        buttonForm.addActionListener(e -> {
+            FrameGetForm frameStaff = new FrameGetForm(productService);
+            frameStaff.setVisible(true);
         });
-        buttonNewProduct.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                FramePostProduct framePostProduct = new FramePostProduct();
-                framePostProduct.setVisible(true);
-            }
+        buttonNewProduct.addActionListener(e -> {
+            FramePostProduct framePostProduct = new FramePostProduct(productService);
+            framePostProduct.setVisible(true);
         });
     }
     public static FrameMain getSingleton(ProductService productService)

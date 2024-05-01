@@ -32,6 +32,8 @@ public class Product {
         convertFormToProduct(productForm, product);
     }
 
+
+
     private void convertFormToProduct(String[][] productForm, Product product) {
         int index = 0;
         this.designation = product.getDesignation();
